@@ -1,14 +1,12 @@
 {
   "name": "html-to-next",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "version": "0.0.0",
+  "private": true,
+  "description": "AI-powered HTML to Next.js component conversion platform",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "devEngines": {
     "packageManager": {
       "name": "pnpm",
@@ -17,5 +15,15 @@
     }
   },
   "packageManager": "pnpm@12.9.1",
-  "type": "module"
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "test": "turbo run test",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck"
+  },
+  "devDependencies": {
+    "turbo": "^2.11.7",
+    "typescript": "^7.0.2"
+  }
 }
