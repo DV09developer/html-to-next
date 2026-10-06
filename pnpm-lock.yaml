@@ -191,6 +191,15 @@ importers:
         specifier: ^5.0.3
         version: 5.0.3(vite@8.3.2)
 
+  packages/ai-core:
+    dependencies:
+      '@html-to-next/schemas':
+        specifier: workspace:*
+        version: link:../schemas
+      '@html-to-next/shared':
+        specifier: workspace:*
+        version: link:../shared
+
   packages/conversion-engine:
     dependencies:
       '@html-to-next/parsers':
