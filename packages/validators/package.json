@@ -1,5 +1,5 @@
 {
-    "name": "@html-to-next/schemas",
+    "name": "@html-to-next/validators",
     "version": "0.0.0",
     "private": true,
     "type": "module",
@@ -19,7 +19,6 @@
         "lint": "eslint ."
     },
     "dependencies": {
-        "@html-to-next/shared": "workspace:*",
-        "zod": "^4.6.5"
+        "@html-to-next/shared": "workspace:*"
     }
 }
