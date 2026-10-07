@@ -1,6 +1,8 @@
 ﻿packages:
     - "apps/*"
     - "packages/*"
-# NOTE: allowBuilds breaks Turbo 2.11.7 workspace discovery.
+# TODO: esbuild needs build-script approval on fresh installs.
+# `allowBuilds` breaks Turbo 2.11.7 workspace discovery (turbo ls -> 0 packages).
+# Revisit before CI: upgrade Turbo or find another approval location.
 # allowBuilds:
 #     esbuild: true
