@@ -1,3 +1,6 @@
 ﻿packages:
     - "apps/*"
     - "packages/*"
+# NOTE: allowBuilds breaks Turbo 2.11.7 workspace discovery.
+# allowBuilds:
+#     esbuild: true
