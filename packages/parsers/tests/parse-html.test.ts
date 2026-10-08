@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { parseHtml } from "../src/index.js";
+import { expectElement } from "./helpers.js";
 
 describe("parseHtml", () => {
     it("parses a fragment without adding html/body wrappers", () => {
@@ -18,27 +19,19 @@ describe("parseHtml", () => {
 
     it("parses nested children", () => {
         const result = parseHtml("<div><p>Hello</p></div>");
-        const div = result.children[0];
+        const div = expectElement(result.children[0]);
 
-        expect(div?.type).toBe("element");
-        if (div?.type === "element") {
-            expect(div.children[0]).toMatchObject({
-                type: "element",
-                tag: "p",
-            });
-        }
+        expect(expectElement(div.children[0]).tag).toBe("p");
     });
 
     it("keeps text nodes", () => {
         const result = parseHtml("<p>Hello</p>");
-        const paragraph = result.children[0];
+        const paragraph = expectElement(result.children[0]);
 
-        if (paragraph?.type === "element") {
-            expect(paragraph.children[0]).toEqual({
-                type: "text",
-                value: "Hello",
-            });
-        }
+        expect(paragraph.children[0]).toEqual({
+            type: "text",
+            value: "Hello",
+        });
     });
 
     it("detects a full document", () => {

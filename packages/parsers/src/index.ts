@@ -7,3 +7,6 @@ export type {
     HtmlTextNode,
     ParsedHtml,
 } from "./html/types.js";
+
+export { walk } from "./html/walk.js";
+export type { Visitor, WalkContext } from "./html/walk.js";
