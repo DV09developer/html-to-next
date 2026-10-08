@@ -12,3 +12,6 @@ export type { NormalizeAttributesResult } from "./cleaner/normalize-attributes.j
 
 export { parseStyle, toCamelCaseProperty } from "./cleaner/parse-style.js";
 export type { StyleEntry } from "./cleaner/parse-style.js";
+
+export { cleanHtml } from "./cleaner/clean-html.js";
+export type { CleanHtmlResult, CleanWarning } from "./cleaner/clean-html.js";
