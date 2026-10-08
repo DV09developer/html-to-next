@@ -20,6 +20,7 @@
     },
     "dependencies": {
         "@html-to-next/shared": "workspace:*",
-        "parse5": "^8.0.1"
+        "parse5": "^8.0.1",
+        "postcss": "^8.5.29"
     }
 }

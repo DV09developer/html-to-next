@@ -10,3 +10,6 @@ export type {
 
 export { walk } from "./html/walk.js";
 export type { Visitor, WalkContext } from "./html/walk.js";
+
+export { parseCss } from "./css/parse-css.js";
+export type { CssDeclaration, CssRule, ParsedCss } from "./css/types.js";
