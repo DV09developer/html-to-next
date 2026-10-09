@@ -34,9 +34,7 @@ describe("parseCss", () => {
             "@media (min-width: 768px) { .a { display: none } }",
         );
 
-        expect(result.rules[0]?.atRules).toEqual([
-            "@media (min-width: 768px)",
-        ]);
+        expect(result.rules[0]?.atRules).toEqual(["@media (min-width: 768px)"]);
     });
 
     it("returns no rules for empty css", () => {

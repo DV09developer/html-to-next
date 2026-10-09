@@ -35,7 +35,9 @@ describe("parseStyle", () => {
 
     it("does not split inside url()", () => {
         expect(
-            parseStyle('background: url("data:image/png;base64,AAA"); color: red'),
+            parseStyle(
+                'background: url("data:image/png;base64,AAA"); color: red',
+            ),
         ).toEqual([
             {
                 property: "background",

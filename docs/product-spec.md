@@ -34,18 +34,18 @@ HTML/CSS → Clean → Parse → Analyze → IR → Component Detection
 
 **Current phase:** Phase 1A, the deterministic core (no AI yet).
 
-| Milestone | Scope | Status |
-|---|---|---|
-| 0 | Repository foundation (monorepo, tooling, package skeletons, `.env.example`) | Done |
-| 1 | HTML cleaner and parser | Done |
-| 2 | CSS engine | In progress |
-| 3 | Component detector | Planned |
-| 4 | AI provider (Gemini) | Planned |
-| 5 | TSX generator | Planned |
-| 6 | Validation engine | Planned |
-| 7 | Repair engine | Planned |
-| 8 | Phase 1 REST API | Planned |
-| 9+ | Auth, workspace, versioning, AI chat, SaaS | Planned |
+| Milestone | Scope                                                                        | Status      |
+| --------- | ---------------------------------------------------------------------------- | ----------- |
+| 0         | Repository foundation (monorepo, tooling, package skeletons, `.env.example`) | Done        |
+| 1         | HTML cleaner and parser                                                      | Done        |
+| 2         | CSS engine                                                                   | In progress |
+| 3         | Component detector                                                           | Planned     |
+| 4         | AI provider (Gemini)                                                         | Planned     |
+| 5         | TSX generator                                                                | Planned     |
+| 6         | Validation engine                                                            | Planned     |
+| 7         | Repair engine                                                                | Planned     |
+| 8         | Phase 1 REST API                                                             | Planned     |
+| 9+        | Auth, workspace, versioning, AI chat, SaaS                                   | Planned     |
 
 ### Milestone 1: HTML cleaner and parser (done)
 
@@ -70,20 +70,20 @@ HTML/CSS → Clean → Parse → Analyze → IR → Component Detection
 
 ## 2. Tech Stack
 
-| Area | Choice | Version in use |
-|---|---|---|
-| Runtime | Node.js | 22.x |
-| Package manager | pnpm (workspaces) | 12.9.1 |
-| Task runner | Turborepo | 2.11.7 |
-| Language | TypeScript (strict) | 6.0.3 |
-| Tests | Vitest | 5.0.3 |
-| Lint / format | ESLint + typescript-eslint, Prettier | ESLint 10.12.0 |
-| HTML parser | parse5 | 8.0.1 |
-| CSS parser | postcss | 8.5.29 |
-| Schemas | Zod | latest at install |
-| API | Express (+ helmet, cors) | 5.2.1 |
-| AI (planned) | Google Gemini behind an `AIProvider` interface | Model TBD (free tier) |
-| Database (Phase 2) | MongoDB Atlas + Mongoose | Not yet used |
+| Area               | Choice                                         | Version in use        |
+| ------------------ | ---------------------------------------------- | --------------------- |
+| Runtime            | Node.js                                        | 22.x                  |
+| Package manager    | pnpm (workspaces)                              | 12.9.1                |
+| Task runner        | Turborepo                                      | 2.11.7                |
+| Language           | TypeScript (strict)                            | 6.0.3                 |
+| Tests              | Vitest                                         | 5.0.3                 |
+| Lint / format      | ESLint + typescript-eslint, Prettier           | ESLint 10.12.0        |
+| HTML parser        | parse5                                         | 8.0.1                 |
+| CSS parser         | postcss                                        | 8.5.29                |
+| Schemas            | Zod                                            | latest at install     |
+| API                | Express (+ helmet, cors)                       | 5.2.1                 |
+| AI (planned)       | Google Gemini behind an `AIProvider` interface | Model TBD (free tier) |
+| Database (Phase 2) | MongoDB Atlas + Mongoose                       | Not yet used          |
 
 ---
 
@@ -132,15 +132,15 @@ Then open `http://localhost:8000/api/v1/health`. Expected response:
 
 Run from the repository root.
 
-| Command | What it does |
-|---|---|
-| `pnpm build` | Builds every package in dependency order (Turbo) |
-| `pnpm test` | Runs all tests (builds dependencies first) |
-| `pnpm lint` | Runs ESLint in every package |
-| `pnpm typecheck` | Type-checks every package without emitting |
-| `pnpm format` | Rewrites files to match Prettier |
-| `pnpm format:check` | Reports formatting differences (for CI) |
-| `pnpm dev` | Runs dev tasks (currently the API) |
+| Command             | What it does                                     |
+| ------------------- | ------------------------------------------------ |
+| `pnpm build`        | Builds every package in dependency order (Turbo) |
+| `pnpm test`         | Runs all tests (builds dependencies first)       |
+| `pnpm lint`         | Runs ESLint in every package                     |
+| `pnpm typecheck`    | Type-checks every package without emitting       |
+| `pnpm format`       | Rewrites files to match Prettier                 |
+| `pnpm format:check` | Reports formatting differences (for CI)          |
+| `pnpm dev`          | Runs dev tasks (currently the API)               |
 
 Target one package with `--filter`:
 
@@ -192,39 +192,39 @@ Turbo builds in this order automatically because each package declares its works
 
 ### `@html-to-next/shared`
 
-| Export | Description |
-|---|---|
-| `AppError` | Error with a machine-readable `code` and optional `details` |
+| Export      | Description                                                                      |
+| ----------- | -------------------------------------------------------------------------------- |
+| `AppError`  | Error with a machine-readable `code` and optional `details`                      |
 | `ErrorCode` | `"VALIDATION_ERROR" \| "PARSE_ERROR" \| "AI_PROVIDER_ERROR" \| "INTERNAL_ERROR"` |
 
 ### `@html-to-next/schemas`
 
-| Export | Description |
-|---|---|
+| Export                    | Description                                                                                           |
+| ------------------------- | ----------------------------------------------------------------------------------------------------- |
 | `conversionOptionsSchema` | Zod schema for `ConversionOptions`, with defaults. Phase 1 accepts only Next.js, TypeScript, Tailwind |
-| `ConversionOptions` | Type inferred from the schema |
+| `ConversionOptions`       | Type inferred from the schema                                                                         |
 
 ### `@html-to-next/parsers`
 
 The only package that knows about `parse5` and `postcss`. Everything else uses our own types.
 
-| Export | Description |
-|---|---|
-| `parseHtml(html)` | Parses HTML into `ParsedHtml` (`mode` plus a tree of `HtmlNode`). Starts with `<!doctype` or `<html` means document mode, otherwise fragment mode |
-| `walk(nodes, visitor)` | Depth-first, parent-first traversal. The visitor receives the node, its parent, and its depth |
-| `parseCss(css)` | Parses CSS into a flat list of `CssRule` (one per selector, with declarations and the at-rule chain) |
-| Types | `HtmlNode`, `HtmlElementNode`, `HtmlTextNode`, `HtmlCommentNode`, `HtmlAttribute`, `ParsedHtml`, `CssRule`, `CssDeclaration`, `ParsedCss`, `Visitor`, `WalkContext` |
+| Export                 | Description                                                                                                                                                         |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `parseHtml(html)`      | Parses HTML into `ParsedHtml` (`mode` plus a tree of `HtmlNode`). Starts with `<!doctype` or `<html` means document mode, otherwise fragment mode                   |
+| `walk(nodes, visitor)` | Depth-first, parent-first traversal. The visitor receives the node, its parent, and its depth                                                                       |
+| `parseCss(css)`        | Parses CSS into a flat list of `CssRule` (one per selector, with declarations and the at-rule chain)                                                                |
+| Types                  | `HtmlNode`, `HtmlElementNode`, `HtmlTextNode`, `HtmlCommentNode`, `HtmlAttribute`, `ParsedHtml`, `CssRule`, `CssDeclaration`, `ParsedCss`, `Visitor`, `WalkContext` |
 
 ### `@html-to-next/conversion-engine`
 
-| Export | Description |
-|---|---|
-| `cleanHtml(html, css?, limits?)` | Full cleaning pipeline. Returns `{ mode, nodes, css, warnings }` |
-| `validateInput` / `DEFAULT_INPUT_LIMITS` | Size, emptiness, and null-byte checks. Throws `AppError("VALIDATION_ERROR")` |
-| `removeScripts(nodes)` | Returns a new tree without `<script>` and the removed count |
-| `normalizeAttributes(nodes)` | Renames attributes to JSX names, removes `on*` handlers, and counts both |
-| `parseStyle(style)` | Converts an inline style string into `{ property, value }[]` with camelCased names |
-| `toCamelCaseProperty(name)` | `margin-top` → `marginTop`, `-ms-transform` → `msTransform`, CSS variables unchanged |
+| Export                                   | Description                                                                          |
+| ---------------------------------------- | ------------------------------------------------------------------------------------ |
+| `cleanHtml(html, css?, limits?)`         | Full cleaning pipeline. Returns `{ mode, nodes, css, warnings }`                     |
+| `validateInput` / `DEFAULT_INPUT_LIMITS` | Size, emptiness, and null-byte checks. Throws `AppError("VALIDATION_ERROR")`         |
+| `removeScripts(nodes)`                   | Returns a new tree without `<script>` and the removed count                          |
+| `normalizeAttributes(nodes)`             | Renames attributes to JSX names, removes `on*` handlers, and counts both             |
+| `parseStyle(style)`                      | Converts an inline style string into `{ property, value }[]` with camelCased names   |
+| `toCamelCaseProperty(name)`              | `margin-top` → `marginTop`, `-ms-transform` → `msTransform`, CSS variables unchanged |
 
 ### `@html-to-next/api`
 
@@ -275,13 +275,13 @@ CSS matching → DOM analysis → intermediate representation → component dete
 
 Base URL: `/api/v1`
 
-| Method | Path | Status |
-|---|---|---|
-| GET | `/health` | Implemented |
-| POST | `/conversions` | Planned (Milestone 8) |
-| GET | `/conversions/:id` | Planned |
-| POST | `/conversions/:id/validate` | Planned |
-| POST | `/conversions/:id/repair` | Planned |
+| Method | Path                        | Status                |
+| ------ | --------------------------- | --------------------- |
+| GET    | `/health`                   | Implemented           |
+| POST   | `/conversions`              | Planned (Milestone 8) |
+| GET    | `/conversions/:id`          | Planned               |
+| POST   | `/conversions/:id/validate` | Planned               |
+| POST   | `/conversions/:id/repair`   | Planned               |
 
 Helmet, CORS, rate limiting, structured logging (pino), and the error middleware are installed or planned but not yet configured.
 
@@ -304,13 +304,13 @@ Helmet, CORS, rate limiting, structured logging (pino), and the error middleware
 
 Vitest, run per package through Turbo. Tests live in each package's `tests/` folder and import from `src/`.
 
-| Package | Tests |
-|---|---|
-| `shared` | 3 |
-| `schemas` | 2 |
-| `parsers` | 13 |
-| `conversion-engine` | 31 |
-| `api` | 1 (smoke) |
+| Package                 | Tests          |
+| ----------------------- | -------------- |
+| `shared`                | 3              |
+| `schemas`               | 2              |
+| `parsers`               | 13             |
+| `conversion-engine`     | 31             |
+| `api`                   | 1 (smoke)      |
 | `validators`, `ai-core` | 1 each (smoke) |
 
 AI calls will be mocked in CI. AI output will be checked with structural assertions, not string equality.
@@ -319,17 +319,17 @@ AI calls will be mocked in CI. AI output will be checked with structural asserti
 
 ## 11. Known Issues and Decisions
 
-| Topic | Detail |
-|---|---|
-| **TypeScript pinned to 6.x** | `typescript-eslint` does not support TypeScript 7 yet. Revisit when it does. The TS Compiler API (Milestone 6) is also safer on 6.x |
-| **`allowBuilds` breaks Turbo** | Adding `allowBuilds:` to `pnpm-workspace.yaml` (the pnpm 12 way to approve `esbuild`) makes Turbo 2.11.7 find zero packages. The block is commented out. A fresh clone may hit `ERR_PNPM_IGNORED_BUILDS` and need `pnpm approve-builds`, which re-adds the block. Resolve before CI (upgrade Turbo or find another approval location) |
-| **`@types/node` is v26** | The runtime is Node 22. Pin with `pnpm add -D @types/node@^22 --filter @html-to-next/api` |
-| **Tests are not type-checked** | Each `tsconfig.json` includes only `src/`. Vitest runs the tests, but `pnpm typecheck` skips them. Add a test tsconfig later |
-| **`<template>` contents skipped** | `parseHtml` ignores `<template>` children for now |
-| **Document detection is simple** | Input starting with a comment before `<html>` is parsed as a fragment |
-| **Escaped quotes in inline styles** | `parseStyle` does not handle `\"` inside quoted values |
-| **Not yet handled by the cleaner** | SVG attribute renames (`stroke-width`), boolean attribute output, `javascript:` URLs |
-| **Gemini model undecided** | Choose the free-tier model at Milestone 4, since names and limits change often |
+| Topic                               | Detail                                                                                                                                                                                                                                                                                                                                |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **TypeScript pinned to 6.x**        | `typescript-eslint` does not support TypeScript 7 yet. Revisit when it does. The TS Compiler API (Milestone 6) is also safer on 6.x                                                                                                                                                                                                   |
+| **`allowBuilds` breaks Turbo**      | Adding `allowBuilds:` to `pnpm-workspace.yaml` (the pnpm 12 way to approve `esbuild`) makes Turbo 2.11.7 find zero packages. The block is commented out. A fresh clone may hit `ERR_PNPM_IGNORED_BUILDS` and need `pnpm approve-builds`, which re-adds the block. Resolve before CI (upgrade Turbo or find another approval location) |
+| **`@types/node` is v26**            | The runtime is Node 22. Pin with `pnpm add -D @types/node@^22 --filter @html-to-next/api`                                                                                                                                                                                                                                             |
+| **Tests are not type-checked**      | Each `tsconfig.json` includes only `src/`. Vitest runs the tests, but `pnpm typecheck` skips them. Add a test tsconfig later                                                                                                                                                                                                          |
+| **`<template>` contents skipped**   | `parseHtml` ignores `<template>` children for now                                                                                                                                                                                                                                                                                     |
+| **Document detection is simple**    | Input starting with a comment before `<html>` is parsed as a fragment                                                                                                                                                                                                                                                                 |
+| **Escaped quotes in inline styles** | `parseStyle` does not handle `\"` inside quoted values                                                                                                                                                                                                                                                                                |
+| **Not yet handled by the cleaner**  | SVG attribute renames (`stroke-width`), boolean attribute output, `javascript:` URLs                                                                                                                                                                                                                                                  |
+| **Gemini model undecided**          | Choose the free-tier model at Milestone 4, since names and limits change often                                                                                                                                                                                                                                                        |
 
 ---
 

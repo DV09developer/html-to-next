@@ -3,7 +3,7 @@ import type { HtmlNode } from "@html-to-next/parsers";
 export type RemoveScriptsResult = {
     nodes: HtmlNode[];
     removedCount: number;
-};  
+};
 
 export function removeScripts(nodes: HtmlNode[]): RemoveScriptsResult {
     let removedCount = 0;

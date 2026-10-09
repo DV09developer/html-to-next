@@ -25,7 +25,9 @@ describe("removeScripts", () => {
     });
 
     it("counts every script", () => {
-        const tree = parseHtml("<script>a()</script><div><SCRIPT>b()</SCRIPT></div>");
+        const tree = parseHtml(
+            "<script>a()</script><div><SCRIPT>b()</SCRIPT></div>",
+        );
 
         expect(removeScripts(tree.children).removedCount).toBe(2);
     });

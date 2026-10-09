@@ -13,3 +13,13 @@ export type { Visitor, WalkContext } from "./html/walk.js";
 
 export { parseCss } from "./css/parse-css.js";
 export type { CssDeclaration, CssRule, ParsedCss } from "./css/types.js";
+
+export { parseSelector } from "./css/selector.js";
+export type {
+    Combinator,
+    CompoundSelector,
+    ParsedSelector,
+    ParseSelectorResult,
+    SelectorStep,
+    Specificity,
+} from "./css/selector.js";
