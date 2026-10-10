@@ -25,3 +25,6 @@ export { analyzeDom } from "./analyzer/analyze-dom.js";
 export type { DomFeatures, DomStats } from "./analyzer/analyze-dom.js";
 
 export { computeSignatures } from "./analyzer/signatures.js";
+
+export { findRepeatedStructures } from "./analyzer/repeated.js";
+export type { RepeatedGroup } from "./analyzer/repeated.js";
