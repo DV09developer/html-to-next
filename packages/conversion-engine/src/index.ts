@@ -28,3 +28,6 @@ export { computeSignatures } from "./analyzer/signatures.js";
 
 export { findRepeatedStructures } from "./analyzer/repeated.js";
 export type { RepeatedGroup } from "./analyzer/repeated.js";
+
+export { detectSections } from "./analyzer/sections.js";
+export type { SectionCandidate, SectionRole } from "./analyzer/sections.js";
