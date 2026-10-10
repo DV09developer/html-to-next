@@ -15,3 +15,5 @@ export type { StyleEntry } from "./cleaner/parse-style.js";
 
 export { cleanHtml } from "./cleaner/clean-html.js";
 export type { CleanHtmlResult, CleanWarning } from "./cleaner/clean-html.js";
+
+export { matchesSelector } from "./css/match-selector.js";
