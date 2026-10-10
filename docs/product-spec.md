@@ -38,8 +38,8 @@ HTML/CSS → Clean → Parse → Analyze → IR → Component Detection
 | --------- | ---------------------------------------------------------------------------- | ----------- |
 | 0         | Repository foundation (monorepo, tooling, package skeletons, `.env.example`) | Done        |
 | 1         | HTML cleaner and parser                                                      | Done        |
-| 2         | CSS engine                                                                   | In progress |
-| 3         | Component detector                                                           | Planned     |
+| 2         | CSS engine                                                                   | Done        |
+| 3         | Component detector                                                           | In progress |
 | 4         | AI provider (Gemini)                                                         | Planned     |
 | 5         | TSX generator                                                                | Planned     |
 | 6         | Validation engine                                                            | Planned     |
@@ -61,10 +61,10 @@ HTML/CSS → Clean → Parse → Analyze → IR → Component Detection
 ### Milestone 2: CSS engine (in progress)
 
 - [x] Parse CSS into rules (selector lists split, `!important`, `@media` context)
-- [ ] Parse selectors into a structure (tag, class, id, compound, descendant, child)
-- [ ] Match selectors against HTML nodes
-- [ ] Map rules to nodes; report unused and unsupported CSS
-- [ ] Wrap CSS syntax errors in `AppError`
+- [x] Parse selectors into a structure (tag, class, id, compound, descendant, child)
+- [x] Match selectors against HTML nodes
+- [x] Map rules to nodes; report unused and unsupported CSS
+- [x] Wrap CSS syntax errors in `AppError`
 
 ---
 

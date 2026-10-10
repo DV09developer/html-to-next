@@ -23,3 +23,5 @@ export type { CssAnalysis, RuleAnalysis } from "./css/analyze-css.js";
 
 export { analyzeDom } from "./analyzer/analyze-dom.js";
 export type { DomFeatures, DomStats } from "./analyzer/analyze-dom.js";
+
+export { computeSignatures } from "./analyzer/signatures.js";
