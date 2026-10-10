@@ -20,3 +20,6 @@ export { matchesSelector } from "./css/match-selector.js";
 
 export { analyzeCss } from "./css/analyze-css.js";
 export type { CssAnalysis, RuleAnalysis } from "./css/analyze-css.js";
+
+export { analyzeDom } from "./analyzer/analyze-dom.js";
+export type { DomFeatures, DomStats } from "./analyzer/analyze-dom.js";

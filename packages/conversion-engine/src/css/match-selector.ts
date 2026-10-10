@@ -3,19 +3,7 @@ import type {
     HtmlElementNode,
     ParsedSelector,
 } from "@html-to-next/parsers";
-
-function getAttribute(node: HtmlElementNode, name: string): string | null {
-    const attribute = node.attributes.find((item) => item.name === name);
-
-    return attribute ? attribute.value : null;
-}
-
-function getClassList(node: HtmlElementNode): string[] {
-    const value =
-        getAttribute(node, "className") ?? getAttribute(node, "class");
-
-    return value ? value.split(/\s+/).filter((name) => name !== "") : [];
-}
+import { getAttribute, getClassList } from "../utils/attributes.js";
 
 function matchesCompound(
     compound: CompoundSelector,
