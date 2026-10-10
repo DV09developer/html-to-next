@@ -31,3 +31,10 @@ export type { RepeatedGroup } from "./analyzer/repeated.js";
 
 export { detectSections } from "./analyzer/sections.js";
 export type { SectionCandidate, SectionRole } from "./analyzer/sections.js";
+
+export { buildCandidates, DEFAULT_MIN_SCORE } from "./analyzer/candidates.js";
+export type {
+    CandidateKind,
+    CandidateOptions,
+    ComponentCandidate,
+} from "./analyzer/candidates.js";
