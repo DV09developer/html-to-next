@@ -17,3 +17,6 @@ export { cleanHtml } from "./cleaner/clean-html.js";
 export type { CleanHtmlResult, CleanWarning } from "./cleaner/clean-html.js";
 
 export { matchesSelector } from "./css/match-selector.js";
+
+export { analyzeCss } from "./css/analyze-css.js";
+export type { CssAnalysis, RuleAnalysis } from "./css/analyze-css.js";
