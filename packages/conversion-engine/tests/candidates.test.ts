@@ -130,4 +130,12 @@ describe("buildCandidates", () => {
         expect(candidatesOf("<section>x</section>")).toHaveLength(1);
         expect(candidatesOf("<section>x</section>", 50)).toEqual([]);
     });
+
+    it("avoids a name that would clash with the root Page component", () => {
+        const result = candidatesOf(
+            '<div class="page"><h3>A</h3></div><div class="page"><h3>B</h3></div>',
+        );
+
+        expect(result[0]?.name).toBe("PageComponent");
+    });
 });

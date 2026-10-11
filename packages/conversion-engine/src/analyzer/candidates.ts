@@ -147,6 +147,9 @@ const RESERVED_NAMES = new Set([
     "JSON",
     "React",
     "Fragment",
+    // The root of every component tree is called "Page" (see component-tree.ts).
+    // A repeated <div class="page"> must not get the same name.
+    "Page",
 ]);
 
 /** The suggested name for a section candidate. */

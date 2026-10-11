@@ -38,3 +38,16 @@ export type {
     CandidateOptions,
     ComponentCandidate,
 } from "./analyzer/candidates.js";
+
+export { buildComponentTree, ROOT_ID } from "./analyzer/component-tree.js";
+export type {
+    ComponentNode,
+    ComponentProp,
+    ComponentTree,
+} from "./analyzer/component-tree.js";
+
+export { detectComponents } from "./analyzer/detect-components.js";
+export type {
+    ComponentDetection,
+    DetectOptions,
+} from "./analyzer/detect-components.js";
