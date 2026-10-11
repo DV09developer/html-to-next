@@ -59,4 +59,8 @@ describe("cleanHtml", () => {
     it("throws a validation error for empty input", () => {
         expect(() => cleanHtml("   ")).toThrow(AppError);
     });
+
+    it("rejects deeply nested html", () => {
+        expect(() => cleanHtml("<div>".repeat(300))).toThrow(AppError);
+    });
 });

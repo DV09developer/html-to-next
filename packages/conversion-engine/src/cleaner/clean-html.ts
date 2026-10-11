@@ -25,7 +25,9 @@ export function cleanHtml(
 ): CleanHtmlResult {
     validateInput(html, css, limits);
 
-    const parsed = parseHtml(html);
+    // Pass the depth limit down. Over-deep input is rejected here, before
+    // any later stage can recurse into it.
+    const parsed = parseHtml(html, { maxDepth: limits.maxNestingDepth });
     const withoutScripts = removeScripts(parsed.children);
     const normalized = normalizeAttributes(withoutScripts.nodes);
 

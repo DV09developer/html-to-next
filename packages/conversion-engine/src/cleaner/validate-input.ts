@@ -1,15 +1,20 @@
 import { AppError } from "@html-to-next/shared";
+import { DEFAULT_MAX_NESTING_DEPTH } from "@html-to-next/parsers";
 
 export type InputLimits = {
     maxHtmlSize: number;
     maxCssSize: number;
     maxTotalInputSize: number;
+    /** Optional so older callers keep working. The parser default applies when omitted. */
+    maxNestingDepth?: number;
 };
 
 export const DEFAULT_INPUT_LIMITS: InputLimits = {
     maxHtmlSize: 500_000,
     maxCssSize: 200_000,
     maxTotalInputSize: 600_000,
+    // One number shared with the parser, so the two can't drift apart.
+    maxNestingDepth: DEFAULT_MAX_NESTING_DEPTH,
 };
 
 export function validateInput(

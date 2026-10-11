@@ -1,4 +1,5 @@
-export { parseHtml } from "./html/parse-html.js";
+export { parseHtml, DEFAULT_MAX_NESTING_DEPTH } from "./html/parse-html.js";
+export type { ParseHtmlOptions } from "./html/parse-html.js";
 export type {
     HtmlAttribute,
     HtmlCommentNode,
