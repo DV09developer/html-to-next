@@ -116,7 +116,8 @@ function convertNode(
     const element = node as DefaultTreeAdapterMap["element"];
     // <template> keeps its children in a separate `content` field, which we
     // skip for now (see Known Issues in the README).
-    const rawChildren = element.tagName === "template" ? [] : element.childNodes;
+    const rawChildren =
+        element.tagName === "template" ? [] : element.childNodes;
 
     return {
         type: "element",
@@ -182,6 +183,10 @@ export function parseHtml(
 
     return {
         mode: "fragment",
-        children: convertChildren((fragment as P5Parent).childNodes, 0, maxDepth),
+        children: convertChildren(
+            (fragment as P5Parent).childNodes,
+            0,
+            maxDepth,
+        ),
     };
 }

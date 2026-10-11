@@ -34,18 +34,18 @@ HTML/CSS → Clean → Parse → Analyze → IR → Component Detection
 
 **Current phase:** Phase 1A, the deterministic core (no AI yet).
 
-| Milestone | Scope                                                                        | Status      |
-| --------- | ---------------------------------------------------------------------------- | ----------- |
-| 0         | Repository foundation (monorepo, tooling, package skeletons, `.env.example`) | Done        |
-| 1         | HTML cleaner and parser                                                      | Done        |
-| 2         | CSS engine                                                                   | Done        |
-| 3         | Component detector                                                           | In progress |
-| 4         | AI provider (Gemini)                                                         | Planned     |
-| 5         | TSX generator                                                                | Planned     |
-| 6         | Validation engine                                                            | Planned     |
-| 7         | Repair engine                                                                | Planned     |
-| 8         | Phase 1 REST API                                                             | Planned     |
-| 9+        | Auth, workspace, versioning, AI chat, SaaS                                   | Planned     |
+| Milestone | Scope                                                                        | Status                            |
+| --------- | ---------------------------------------------------------------------------- | --------------------------------- |
+| 0         | Repository foundation (monorepo, tooling, package skeletons, `.env.example`) | Done                              |
+| 1         | HTML cleaner and parser                                                      | Done                              |
+| 2         | CSS engine                                                                   | Done                              |
+| 3         | Component detector                                                           | Done (golden fixture in progress) |
+| 4         | AI provider (Gemini)                                                         | Planned                           |
+| 5         | TSX generator                                                                | Planned                           |
+| 6         | Validation engine                                                            | Planned                           |
+| 7         | Repair engine                                                                | Planned                           |
+| 8         | Phase 1 REST API                                                             | Planned                           |
+| 9+        | Auth, workspace, versioning, AI chat, SaaS                                   | Planned                           |
 
 ### Milestone 1: HTML cleaner and parser (done)
 
@@ -58,13 +58,24 @@ HTML/CSS → Clean → Parse → Analyze → IR → Component Detection
 - [x] Inline `style` string parser (handles `url(...)` and quoted values)
 - [x] `cleanHtml` pipeline combining all of the above, with structured warnings
 
-### Milestone 2: CSS engine (in progress)
+### Milestone 2: CSS engine (done)
 
 - [x] Parse CSS into rules (selector lists split, `!important`, `@media` context)
 - [x] Parse selectors into a structure (tag, class, id, compound, descendant, child)
-- [x] Match selectors against HTML nodes
-- [x] Map rules to nodes; report unused and unsupported CSS
+- [x] Match selectors against HTML nodes (right-to-left, with backtracking)
+- [x] Map rules to nodes; report unused and unsupported CSS (`analyzeCss`)
 - [x] Wrap CSS syntax errors in `AppError`
+
+### Milestone 3: DOM analyzer and component detection (done)
+
+- [x] DOM statistics (`analyzeDom`): element counts, depth, tag and class frequency, feature counts
+- [x] Subtree signatures (`computeSignatures`): a fingerprint of each element's shape, ignoring text
+- [x] Repeated structure detection (`findRepeatedStructures`), with nested repeats removed
+- [x] Semantic section detection (`detectSections`): roles such as navbar, hero, footer
+- [x] Candidate scoring and naming (`buildCandidates`): ranked, unique PascalCase names
+- [x] Component tree (`buildComponentTree`) and the one-call `detectComponents`
+- [x] HTML nesting depth limit, enforced while parsing (hardening)
+- [ ] Golden fixture running the whole Phase 1A pipeline on a realistic page
 
 ---
 
@@ -208,23 +219,36 @@ Turbo builds in this order automatically because each package declares its works
 
 The only package that knows about `parse5` and `postcss`. Everything else uses our own types.
 
-| Export                 | Description                                                                                                                                                         |
-| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `parseHtml(html)`      | Parses HTML into `ParsedHtml` (`mode` plus a tree of `HtmlNode`). Starts with `<!doctype` or `<html` means document mode, otherwise fragment mode                   |
-| `walk(nodes, visitor)` | Depth-first, parent-first traversal. The visitor receives the node, its parent, and its depth                                                                       |
-| `parseCss(css)`        | Parses CSS into a flat list of `CssRule` (one per selector, with declarations and the at-rule chain)                                                                |
-| Types                  | `HtmlNode`, `HtmlElementNode`, `HtmlTextNode`, `HtmlCommentNode`, `HtmlAttribute`, `ParsedHtml`, `CssRule`, `CssDeclaration`, `ParsedCss`, `Visitor`, `WalkContext` |
+| Export                      | Description                                                                                                                                                                                                                                                                         |
+| --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `parseHtml(html)`           | Parses HTML into `ParsedHtml` (`mode` plus a tree of `HtmlNode`). Starts with `<!doctype` or `<html` means document mode, otherwise fragment mode                                                                                                                                   |
+| `walk(nodes, visitor)`      | Depth-first, parent-first traversal. The visitor receives the node, its parent, and its depth                                                                                                                                                                                       |
+| `parseCss(css)`             | Parses CSS into a flat list of `CssRule` (one per selector, with declarations and the at-rule chain)                                                                                                                                                                                |
+| `parseSelector(selector)`   | Parses a selector into steps (compound plus combinator) with specificity. Returns `{ supported: false, reason }` for syntax we don't support yet                                                                                                                                    |
+| `DEFAULT_MAX_NESTING_DEPTH` | 256. `parseHtml` throws `AppError("VALIDATION_ERROR")` beyond it                                                                                                                                                                                                                    |
+| Types                       | `HtmlNode`, `HtmlElementNode`, `HtmlTextNode`, `HtmlCommentNode`, `HtmlAttribute`, `ParsedHtml`, `ParseHtmlOptions`, `CssRule`, `CssDeclaration`, `ParsedCss`, `ParsedSelector`, `SelectorStep`, `CompoundSelector`, `ParseSelectorResult`, `Specificity`, `Visitor`, `WalkContext` |
 
 ### `@html-to-next/conversion-engine`
 
-| Export                                   | Description                                                                          |
-| ---------------------------------------- | ------------------------------------------------------------------------------------ |
-| `cleanHtml(html, css?, limits?)`         | Full cleaning pipeline. Returns `{ mode, nodes, css, warnings }`                     |
-| `validateInput` / `DEFAULT_INPUT_LIMITS` | Size, emptiness, and null-byte checks. Throws `AppError("VALIDATION_ERROR")`         |
-| `removeScripts(nodes)`                   | Returns a new tree without `<script>` and the removed count                          |
-| `normalizeAttributes(nodes)`             | Renames attributes to JSX names, removes `on*` handlers, and counts both             |
-| `parseStyle(style)`                      | Converts an inline style string into `{ property, value }[]` with camelCased names   |
-| `toCamelCaseProperty(name)`              | `margin-top` → `marginTop`, `-ms-transform` → `msTransform`, CSS variables unchanged |
+| Export                                       | Description                                                                                               |
+| -------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| `cleanHtml(html, css?, limits?)`             | Full cleaning pipeline. Returns `{ mode, nodes, css, warnings }`                                          |
+| `validateInput` / `DEFAULT_INPUT_LIMITS`     | Size, emptiness, and null-byte checks. Throws `AppError("VALIDATION_ERROR")`                              |
+| `removeScripts(nodes)`                       | Returns a new tree without `<script>` and the removed count                                               |
+| `normalizeAttributes(nodes)`                 | Renames attributes to JSX names, removes `on*` handlers, and counts both                                  |
+| `parseStyle(style)`                          | Converts an inline style string into `{ property, value }[]` with camelCased names                        |
+| `toCamelCaseProperty(name)`                  | `margin-top` → `marginTop`, `-ms-transform` → `msTransform`, CSS variables unchanged                      |
+| `matchesSelector(selector, node, ancestors)` | Tests one parsed selector against one element. `ancestors` is root first, direct parent last              |
+| `analyzeCss(nodes, css)`                     | Maps CSS rules to element paths. Reports unused and unsupported rules. Throws `PARSE_ERROR` on broken CSS |
+| `analyzeDom(nodes)`                          | Statistics: element and text counts, depth, tag and class frequency, feature counts                       |
+| `computeSignatures(nodes)`                   | Path → structure fingerprint, such as `div.card(h3(#),p(#))`                                              |
+| `findRepeatedStructures(signatures)`         | Groups of elements sharing a structure, with nested repeats removed                                       |
+| `detectSections(nodes)`                      | Elements with a recognized role (navbar, hero, footer, ...) and the reason for it                         |
+| `buildCandidates(nodes, repeated, sections)` | Ranked component candidates with unique PascalCase names and scoring reasons                              |
+| `buildComponentTree(candidates)`             | Nests candidates into a tree under a root `Page` node                                                     |
+| `detectComponents(nodes)`                    | Runs all the analyzers above and returns every result, including the tree                                 |
+
+**Element paths.** Analyzer results refer to elements by path: the child index at each level joined by dots (`"0.1.2"`). Text and comment nodes use up an index but never get a path. Every analyzer uses the same scheme, so results can be combined.
 
 ### `@html-to-next/api`
 
@@ -257,6 +281,24 @@ result.warnings; // SCRIPTS_REMOVED, EVENT_HANDLERS_REMOVED
 ```
 
 Warning codes currently produced: `SCRIPTS_REMOVED`, `EVENT_HANDLERS_REMOVED`.
+
+### Implemented: analysis
+
+```text
+cleaned tree ──→ analyzeCss          (which CSS rules apply to which elements)
+             ──→ detectComponents    (stats → signatures → repeats + sections
+                                      → candidates → component tree)
+```
+
+```ts
+import { cleanHtml, detectComponents } from "@html-to-next/conversion-engine";
+
+const cleaned = cleanHtml(html, css);
+const detection = detectComponents(cleaned.nodes);
+
+detection.tree.nodes.map((node) => node.name);
+// ["Page", "Navbar", "Hero", "Features", "FeatureCard", "Footer"]
+```
 
 ### Design decisions
 
@@ -308,8 +350,8 @@ Vitest, run per package through Turbo. Tests live in each package's `tests/` fol
 | ----------------------- | -------------- |
 | `shared`                | 3              |
 | `schemas`               | 2              |
-| `parsers`               | 13             |
-| `conversion-engine`     | 31             |
+| `parsers`               | 31             |
+| `conversion-engine`     | 106            |
 | `api`                   | 1 (smoke)      |
 | `validators`, `ai-core` | 1 each (smoke) |
 
@@ -326,6 +368,12 @@ AI calls will be mocked in CI. AI output will be checked with structural asserti
 | **`@types/node` is v26**            | The runtime is Node 22. Pin with `pnpm add -D @types/node@^22 --filter @html-to-next/api`                                                                                                                                                                                                                                             |
 | **Tests are not type-checked**      | Each `tsconfig.json` includes only `src/`. Vitest runs the tests, but `pnpm typecheck` skips them. Add a test tsconfig later                                                                                                                                                                                                          |
 | **`<template>` contents skipped**   | `parseHtml` ignores `<template>` children for now                                                                                                                                                                                                                                                                                     |
+| **Nesting depth is capped at 256**  | `parseHtml` rejects deeper input while parsing. Without the cap, `parse5` took about 6 seconds on 20,000 nested elements and recursive walkers could overflow the stack                                                                                                                                                               |
+| **Package changes need a rebuild**  | Packages import each other's compiled `dist/`. After changing a package's exports, run `pnpm build` (and restart the TS server in VS Code) or dependents report missing exports                                                                                                                                                       |
+| **Unsupported CSS selectors**       | Attribute selectors, pseudo-classes (`:hover`), pseudo-elements, sibling combinators, `:not()` and `*` are reported, not matched. `@keyframes` steps appear as unused or unsupported rules                                                                                                                                            |
+| **Section hints are a fixed table** | Role hints (hero, pricing, ...) live in `NAME_HINTS` in `sections.ts`. A `<header>` inside an `<article>` is still labeled `header`                                                                                                                                                                                                   |
+| **Component names are ASCII-only**  | A class with no ASCII letters falls back to the tag-based name. The AI may rename components later                                                                                                                                                                                                                                    |
+| **Props are not detected yet**      | `ComponentNode.props` is always empty until the AI stage                                                                                                                                                                                                                                                                              |
 | **Document detection is simple**    | Input starting with a comment before `<html>` is parsed as a fragment                                                                                                                                                                                                                                                                 |
 | **Escaped quotes in inline styles** | `parseStyle` does not handle `\"` inside quoted values                                                                                                                                                                                                                                                                                |
 | **Not yet handled by the cleaner**  | SVG attribute renames (`stroke-width`), boolean attribute output, `javascript:` URLs                                                                                                                                                                                                                                                  |
@@ -335,11 +383,13 @@ AI calls will be mocked in CI. AI output will be checked with structural asserti
 
 ## 12. Roadmap
 
-1. **Milestone 2:** finish the CSS engine (selector parsing, matching, unused/unsupported reporting)
-2. **Milestone 3:** DOM analyzer, intermediate representation, component detection
+1. **Next:** golden fixture for the whole Phase 1A pipeline, then a standalone intermediate representation (IR) for the AI prompt
+2. **Milestone 3 leftovers:** prop detection ideas, `<template>` support, SVG attribute table
 3. **Milestone 4:** `AIProvider` interface, `GeminiProvider`, `MockProvider`, versioned prompts, Zod-validated output
 4. **Milestone 5:** TSX generator with Tailwind and Next.js transformations
 5. **Milestone 6:** validation (TypeScript Compiler API, Next.js rules, accessibility)
 6. **Milestone 7:** repair loop with `MAX_REPAIR_ATTEMPTS`
 7. **Milestone 8:** Phase 1 REST API, benchmark suite, golden fixtures
 8. **Phase 2 and later:** authentication, projects, Monaco workspace, versioning, AI chat, SaaS features
+
+**Principle:** do not build SaaS features before the conversion engine is reliable. The engine is the product.
