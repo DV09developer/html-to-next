@@ -39,7 +39,7 @@ HTML/CSS → Clean → Parse → Analyze → IR → Component Detection
 | 0         | Repository foundation (monorepo, tooling, package skeletons, `.env.example`) | Done                              |
 | 1         | HTML cleaner and parser                                                      | Done                              |
 | 2         | CSS engine                                                                   | Done                              |
-| 3         | Component detector                                                           | Done (golden fixture in progress) |
+| 3         | Component detector                                                           | Done                              |
 | 4         | AI provider (Gemini)                                                         | Planned                           |
 | 5         | TSX generator                                                                | Planned                           |
 | 6         | Validation engine                                                            | Planned                           |
@@ -75,7 +75,7 @@ HTML/CSS → Clean → Parse → Analyze → IR → Component Detection
 - [x] Candidate scoring and naming (`buildCandidates`): ranked, unique PascalCase names
 - [x] Component tree (`buildComponentTree`) and the one-call `detectComponents`
 - [x] HTML nesting depth limit, enforced while parsing (hardening)
-- [ ] Golden fixture running the whole Phase 1A pipeline on a realistic page
+- [x] Golden fixture running the whole Phase 1A pipeline on a realistic page
 
 ---
 
@@ -351,7 +351,7 @@ Vitest, run per package through Turbo. Tests live in each package's `tests/` fol
 | `shared`                | 3              |
 | `schemas`               | 2              |
 | `parsers`               | 31             |
-| `conversion-engine`     | 106            |
+| `conversion-engine`     | 110            |
 | `api`                   | 1 (smoke)      |
 | `validators`, `ai-core` | 1 each (smoke) |
 

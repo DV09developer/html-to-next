@@ -22,5 +22,8 @@
         "@html-to-next/parsers": "workspace:*",
         "@html-to-next/schemas": "workspace:*",
         "@html-to-next/shared": "workspace:*"
+    },
+    "devDependencies": {
+        "@types/node": "^22.20.5"
     }
 }

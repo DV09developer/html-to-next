@@ -1,0 +1,7 @@
+.navbar { display: flex; }
+.hero { padding: 4rem; }
+.feature-card { border: 1px solid #ddd; }
+.feature-card h3 { margin: 0; }
+.footer a:hover { color: red; }
+.unused { color: blue; }
+@media (min-width: 768px) { .features { display: grid; } }
