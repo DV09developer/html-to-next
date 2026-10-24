@@ -4,7 +4,11 @@ export type { ConversionOptions } from "./conversion.js";
 export { generatedFileSchema } from "./generated-file.js";
 export type { GeneratedFile } from "./generated-file.js";
 
-export { validationIssueSchema, validationResultSchema, createValidationResult } from "./validation.js";
+export {
+    validationIssueSchema,
+    validationResultSchema,
+    createValidationResult,
+} from "./validation.js";
 export type { ValidationIssue, ValidationResult } from "./validation.js";
 
 export { warningSchema } from "./warning.js";

@@ -7,6 +7,7 @@ export type {
     HtmlNode,
     HtmlTextNode,
     ParsedHtml,
+    SourceRange,
 } from "./html/types.js";
 
 export { walk } from "./html/walk.js";

@@ -1,7 +1,7 @@
 import { defaultTreeAdapter, parse, parseFragment } from "parse5";
 import type { DefaultTreeAdapterMap, TreeAdapter } from "parse5";
 import { AppError } from "@html-to-next/shared";
-import type { HtmlNode, ParsedHtml } from "./types.js";
+import type { HtmlNode, ParsedHtml, SourceRange } from "./types.js";
 
 // Short aliases for parse5's node types, to keep the code below readable.
 type P5Node = DefaultTreeAdapterMap["node"];
@@ -75,6 +75,23 @@ function createDepthLimitedAdapter(
 }
 
 /**
+ * Reads the position parse5 recorded for an element.
+ * Returns undefined for elements the parser invented (they have no
+ * location), so we never store a made-up range.
+ */
+function readSource(
+    element: DefaultTreeAdapterMap["element"],
+): SourceRange | undefined {
+    const location = element.sourceCodeLocation;
+
+    if (!location) {
+        return undefined;
+    }
+
+    return { start: location.startOffset, end: location.endOffset };
+}
+
+/**
  * Converts one parse5 node into our own node type.
  *
  * `depth` is how many element levels are above this node (0 at the top).
@@ -119,6 +136,8 @@ function convertNode(
     const rawChildren =
         element.tagName === "template" ? [] : element.childNodes;
 
+    const source = readSource(element);
+
     return {
         type: "element",
         tag: element.tagName,
@@ -127,6 +146,9 @@ function convertNode(
             value: attr.value,
         })),
         children: convertChildren(rawChildren, depth + 1, maxDepth),
+        // Only add the key when we have a value, so nodes without a location
+        // look exactly like they did before this change.
+        ...(source ? { source } : {}),
     };
 }
 
@@ -171,7 +193,10 @@ export function parseHtml(
     const isDocument = /^\s*(<!doctype|<html[\s>])/i.test(html);
 
     if (isDocument) {
-        const document = parse(html, { treeAdapter });
+        const document = parse(html, {
+            treeAdapter,
+            sourceCodeLocationInfo: true,
+        });
 
         return {
             mode: "document",
@@ -179,7 +204,10 @@ export function parseHtml(
         };
     }
 
-    const fragment = parseFragment(html, { treeAdapter });
+    const fragment = parseFragment(html, {
+        treeAdapter,
+        sourceCodeLocationInfo: true,
+    });
 
     return {
         mode: "fragment",

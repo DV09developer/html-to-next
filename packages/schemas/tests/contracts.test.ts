@@ -26,7 +26,9 @@ const validResult = {
             props: [],
         },
     ],
-    warnings: [{ code: "SCRIPTS_REMOVED", message: "Removed 1 script", count: 1 }],
+    warnings: [
+        { code: "SCRIPTS_REMOVED", message: "Removed 1 script", count: 1 },
+    ],
     errors: [],
     validation: { valid: true, errors: [], warnings: [] },
     metadata: { durationMs: 12, aiUsed: false, repairAttempts: 0 },
@@ -34,13 +36,18 @@ const validResult = {
 
 describe("conversionResultSchema", () => {
     it("accepts a complete valid result", () => {
-        expect(conversionResultSchema.safeParse(validResult).success).toBe(true);
+        expect(conversionResultSchema.safeParse(validResult).success).toBe(
+            true,
+        );
     });
 
     it("rejects a result with a missing section", () => {
-        const { validation: _validation, ...incomplete } = validResult;
+        const incomplete: Partial<typeof validResult> = { ...validResult };
+        delete incomplete.validation;
 
-        expect(conversionResultSchema.safeParse(incomplete).success).toBe(false);
+        expect(conversionResultSchema.safeParse(incomplete).success).toBe(
+            false,
+        );
     });
 
     it("rejects negative durations", () => {

@@ -63,4 +63,15 @@ describe("cleanHtml", () => {
     it("rejects deeply nested html", () => {
         expect(() => cleanHtml("<div>".repeat(300))).toThrow(AppError);
     });
+
+    it("keeps source locations through cleaning", () => {
+        const html = '<div class="a"><script>x()</script><p>Hi</p></div>';
+        const div = firstElement(cleanHtml(html).nodes);
+        const p = firstElement(div.children);
+
+        // The script was removed, but the <p> still points at the original text.
+        expect(p.source && html.slice(p.source.start, p.source.end)).toBe(
+            "<p>Hi</p>",
+        );
+    });
 });

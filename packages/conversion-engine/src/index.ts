@@ -51,3 +51,6 @@ export type {
     ComponentDetection,
     DetectOptions,
 } from "./analyzer/detect-components.js";
+
+export { buildIndex, ancestorIdsOf } from "./index-tree/build-index.js";
+export type { IndexedNode, TreeIndex } from "./index-tree/build-index.js";
